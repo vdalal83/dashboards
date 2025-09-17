@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Australia Trade Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4aea1e86-aae9-4b31-a787-889a2545ddd3"
+  }
+}

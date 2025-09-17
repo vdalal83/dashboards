@@ -1,0 +1,120 @@
+table Commodity
+	lineageTag: d4c281f8-9e31-496c-b0fc-d31314b54d8e
+
+	column 'Row Labels'
+		dataType: string
+		lineageTag: 34ed58f9-6928-4de2-bd03-2c4b09096e9a
+		summarizeBy: none
+		sourceColumn: Row Labels
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Geographic level 1'
+		dataType: string
+		lineageTag: 0f010c29-185c-4340-989b-e66fe2bcff29
+		summarizeBy: none
+		sourceColumn: Geographic level 1
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Geographic level 2'
+		dataType: string
+		lineageTag: c961076e-407e-480b-aa30-3c7cb15bb24c
+		summarizeBy: none
+		sourceColumn: Geographic level 2
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Geographic level 3'
+		dataType: string
+		lineageTag: 097cf522-36d3-4735-825d-51c36c546bfd
+		summarizeBy: none
+		sourceColumn: Geographic level 3
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: eacf030b-3697-4d13-9cfb-82e45e8a8494
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sector
+		dataType: string
+		lineageTag: c7bc7644-893c-4b71-b819-a2cc3e7b8c1f
+		summarizeBy: none
+		sourceColumn: Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SITC 3 digit'
+		dataType: string
+		lineageTag: bad4ced4-d86b-4209-9867-52a047626cb7
+		summarizeBy: none
+		sourceColumn: SITC 3 digit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: cfe1c2bd-459c-48db-b5fc-f602f24076d8
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 94242113-d0c6-4576-b525-1f136c21fa68
+		summarizeBy: none
+		sourceColumn: Month
+
+		variation Variation
+			isDefault
+			relationship: 00e5a21a-95b3-47c6-a27d-50185cc06e74
+			defaultHierarchy: LocalDateTable_2821590a-9047-40ae-b47e-136d54766ead.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Value A$''000'
+		dataType: double
+		lineageTag: 43305aaf-b8f7-4314-9706-93f4a0198d85
+		summarizeBy: sum
+		sourceColumn: Value A$'000
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Year = year(Commodity[Month])
+		dataType: string
+		lineageTag: 8fa2fe41-6b8d-49e9-a8e8-31c1722d4f7b
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Commodity = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\vaibh\Desktop\CVs\Viz Dashboard\Aus Import Export Data\Aus Commodity.xlsx"), null, true),
+				    Sheet3_Sheet = Source{[Item="Sheet3",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Sheet3_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Row Labels", type text}, {"Geographic level 1", type text}, {"Geographic level 2", type text}, {"Geographic level 3", type text}, {"Economy", type text}, {"Sector", type text}, {"SITC 3 digit", type text}, {"Category", type text}, {"Month", type date}, {"Value A$'000", type number}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Economy", "Country"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

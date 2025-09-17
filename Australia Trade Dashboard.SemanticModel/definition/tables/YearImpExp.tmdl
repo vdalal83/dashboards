@@ -1,0 +1,116 @@
+table YearImpExp
+	lineageTag: 1be1cebf-3121-442f-ab60-73877fefa0f5
+
+	measure 'Value Selected Year' =
+			
+			CALCULATE(
+			    SUM(YearImpExp[Value]),
+			    FILTER(
+			        ALL(YearImpExp[Year]),
+			        YearImpExp[Year] = SELECTEDVALUE(YearImpExp[Year])
+			    )
+			)
+		formatString: 0.00
+		lineageTag: f2b8e6dc-2142-4037-8df3-46aa178429a3
+
+	measure 'Value Previous Year' = ```
+			
+			CALCULATE(
+			    SUM(YearImpExp[Value]),
+			    FILTER(
+			        ALL(YearImpExp[Year]),
+			        YearImpExp[Year] = SELECTEDVALUE(YearImpExp[Year]) - 1
+			    )
+			)
+			
+			```
+		formatString: 0.00
+		lineageTag: 2bcc4405-b7e4-4f31-a2a1-e9906053527b
+
+	measure 'Value Growth %' = ```
+			
+			DIVIDE(
+			    [Value Selected Year] - [Value Previous Year],
+			    [Value Previous Year]
+			)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: d2450306-bc16-4244-85dc-80d832dfc914
+
+	column Type
+		dataType: string
+		lineageTag: 43f01294-6d87-406f-a053-69d3c2d4a8e6
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Row Labels'
+		dataType: string
+		lineageTag: be1336b3-8808-4303-bc86-ae62aa97287f
+		summarizeBy: none
+		sourceColumn: Row Labels
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 6d1f24d5-c9ba-4d06-aaae-51e78d818d23
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 052fca53-6072-4d6a-9343-aeb64401eecc
+		summarizeBy: sum
+		sourceColumn: Year
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: double
+		lineageTag: 2485df51-2973-492a-af7b-1c4162236cdb
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'High Country' =
+			IF(
+			    YearImpExp[Value] > 100,
+			    YearImpExp[Country],
+			    ""
+			)
+		lineageTag: 695c382e-3a95-4fc4-b0d9-4692c5466215
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition YearImpExp = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\vaibh\Desktop\CVs\Viz Dashboard\Aus Import Export Data\Aus Import Export.xlsx"), null, false),
+				    Sheet1_sheet = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Sheet1_sheet,{{"Column3", type text}, {"Column4", type number}, {"Column5", type number}, {"Column6", type number}, {"Column7", type number}, {"Column8", type number}, {"Column9", type number}, {"Column10", type number}, {"Column11", type number}, {"Column12", type number}, {"Column13", type number}, {"Column14", type number}, {"Column15", type number}, {"Column16", type number}, {"Column17", type number}, {"Column18", type number}, {"Column19", type number}, {"Column20", type number}, {"Column21", type number}}),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"Type", type text}, {"Row Labels", type text}, {"Economy", type text}, {"2007", type number}, {"2008", type number}, {"2009", type number}, {"2010", type number}, {"2011", type number}, {"2012", type number}, {"2013", type number}, {"2014", type number}, {"2015", type number}, {"2016", type number}, {"2017", type number}, {"2018", type number}, {"2019", type number}, {"2020", type number}, {"2021", type number}, {"2022", type number}, {"2023", type number}, {"2024", type number}}),
+				    #"Unpivoted Only Selected Columns" = Table.Unpivot(#"Changed Type1", {"2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"}, "Attribute", "Value"),
+				    #"Renamed Columns" = Table.RenameColumns(#"Unpivoted Only Selected Columns",{{"Attribute", "Year"}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each ([Year] <> "2007" and [Year] <> "2008" and [Year] <> "2009" and [Year] <> "2010" and [Year] <> "2011" and [Year] <> "2012" and [Year] <> "2013")),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Filtered Rows",{{"Economy", "Country"}})
+				in
+				    #"Renamed Columns1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

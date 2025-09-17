@@ -1,0 +1,25 @@
+relationship 00e5a21a-95b3-47c6-a27d-50185cc06e74
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Commodity.Month
+	toColumn: LocalDateTable_2821590a-9047-40ae-b47e-136d54766ead.Date
+
+relationship 29d40321-55df-16b1-153f-70babd70a500
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: Commodity.Country
+	toColumn: YearImpExp.Country
+
+relationship 5101959d-bfc6-76e6-1471-4ae752336c61
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: Commodity.'Row Labels'
+	toColumn: YearImpExp.'Row Labels'
+
+relationship b3447d8d-d488-397c-3274-55439937ce4d
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: Commodity.Year
+	toColumn: YearImpExp.Year
+

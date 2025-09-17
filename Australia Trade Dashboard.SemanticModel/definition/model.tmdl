@@ -1,0 +1,26 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+/// Errors in queries that were loaded on 16-09-2025 09:42:54.
+queryGroup 'Query Errors - 16-09-2025 09:42:54'
+
+	annotation PBI_QueryGroupOrder = 0
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["YearImpExp","Errors in Table 1 (Sheet1)","Commodity"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table YearImpExp
+ref table Commodity
+ref table DateTableTemplate_5455e95c-f0dd-49d8-a3f4-893028b3918e
+ref table LocalDateTable_2821590a-9047-40ae-b47e-136d54766ead
+
+ref cultureInfo en-US
+
